@@ -7,8 +7,32 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String greetResult = '';
+  int sumResult = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _callRustFunctions();
+  }
+
+  Future<void> _callRustFunctions() async {
+    final greeting = greet(name: "Tom"); // Sync function
+    final sum = addNumbers(a: 5, b: 7);  // Sync function
+
+    setState(() {
+      greetResult = greeting;
+      sumResult = sum;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +40,13 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('flutter_rust_bridge quickstart')),
         body: Center(
-          child: Text(
-            'Action: Call Rust `greet("Tom")`\nResult: `${greet(name: "Tom")}`',
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Rust greet("Tom"): $greetResult'),
+              const SizedBox(height: 10),
+              Text('Rust add_numbers(5, 7): $sumResult'),
+            ],
           ),
         ),
       ),
